@@ -42,12 +42,45 @@
   .tip { text-align: center; color: var(--muted); font-size: .95rem; margin: 18px 8px 0; }
   .tip svg { width: 18px; height: 18px; vertical-align: -3px; margin-right: 6px; }
 
+  /* --- our own player controls: identical on every phone --- */
+  .controls[hidden] { display: none; }
+  .controls { margin-top: 2px; }
+  .seek { display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 10px; }
+  .time { font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; font-size: .82rem; color: var(--muted); font-variant-numeric: tabular-nums; min-width: 2.9em; }
+  #tot { text-align: right; }
+  #seek { -webkit-appearance: none; appearance: none; width: 100%; height: 32px; margin: 0; background: transparent; cursor: pointer; --p: 0%; }
+  #seek:focus { outline: none; }
+  #seek:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 6px; }
+  #seek::-webkit-slider-runnable-track { height: 6px; border-radius: 3px; background: linear-gradient(to right, var(--accent) var(--p), var(--track, rgba(127,127,127,.3)) var(--p)); }
+  #seek::-webkit-slider-thumb { -webkit-appearance: none; width: 20px; height: 20px; margin-top: -7px; border-radius: 50%; background: var(--accent); border: 3px solid var(--card-solid, #fff); box-shadow: 0 1px 4px rgba(0,0,0,.35); }
+  #seek::-moz-range-track { height: 6px; border-radius: 3px; background: var(--track, rgba(127,127,127,.3)); }
+  #seek::-moz-range-progress { height: 6px; border-radius: 3px; background: var(--accent); }
+  #seek::-moz-range-thumb { width: 14px; height: 14px; border-radius: 50%; background: var(--accent); border: 3px solid var(--card-solid, #fff); box-shadow: 0 1px 4px rgba(0,0,0,.35); }
+  .buttons { display: flex; align-items: center; justify-content: center; gap: 28px; margin-top: 10px; }
+  .buttons button { -webkit-tap-highlight-color: transparent; cursor: pointer; transition: transform .1s ease; }
+  .buttons button:active { transform: scale(.94); }
+  .buttons button:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+  .skip { position: relative; width: 58px; height: 58px; border-radius: 50%; border: 1px solid var(--line); background: transparent; color: var(--ink); padding: 0; }
+  .skip svg { position: absolute; inset: 11px; width: 36px; height: 36px; }
+  .skip.fwd svg { transform: scaleX(-1); }
+  .skip span { position: absolute; inset: 0; display: grid; place-items: center; padding-top: 2px; font: 700 .74rem/1 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; }
+  .play { position: relative; width: 76px; height: 76px; border-radius: 50%; border: 0; padding: 0; background: var(--accent); color: var(--accent-ink); box-shadow: 0 6px 18px rgba(0,0,0,.28); }
+  .play svg { position: absolute; inset: 20px; width: 36px; height: 36px; }
+  .play .i-play { left: 22px; }
+  .play .i-pause, .play.playing .i-play { display: none; }
+  .play.playing .i-pause { display: block; }
+  .play .spinner { display: none; position: absolute; inset: 6px; border-radius: 50%; border: 3px solid transparent; border-top-color: var(--accent-ink); animation: spin .9s linear infinite; }
+  .play.loading .spinner { display: block; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  @media (prefers-reduced-motion: reduce) { .play .spinner { animation-duration: 2.5s; } }
+
   :root {
     --paper: #120d0b; --card: rgba(34,26,21,.94); --ink: #f3eadb; --muted: #bfae96; --line: #3d3128;
     --accent: #e3b05c; --accent-ink: #1a120c; --body-font: "Iowan Old Style", "Palatino Linotype", Palatino, "Book Antiqua", Georgia, serif; --radius: 18px;
+    --track: rgba(255,255,255,.16); --card-solid: #221a15;
     --shadow: 0 10px 40px rgba(0,0,0,.45);
   }
-  .hero { position: relative; height: 60vh; height: 60svh; min-height: 360px; max-height: 680px; overflow: hidden; }
+  .hero { position: relative; height: 53vh; height: 53svh; min-height: 320px; max-height: 680px; overflow: hidden; }
   .hero img { width: 100%; height: 100%; object-fit: cover; object-position: 50% 40%; }
   .hero::after { content: ""; position: absolute; inset: 0; background: linear-gradient(180deg, rgba(18,13,11,0) 35%, rgba(18,13,11,.55) 68%, var(--paper) 100%); }
   .hero-text { position: absolute; left: 0; right: 0; bottom: 34px; z-index: 1; text-align: center; padding: 0 20px; }
@@ -55,6 +88,23 @@
   h1 { font-weight: 600; font-size: clamp(1.7rem, 7vw, 2.6rem); line-height: 1.12; margin: 0 auto; max-width: 560px; color: #fff8ec; text-shadow: 0 2px 18px rgba(0,0,0,.7); text-wrap: balance; }
   main { position: relative; z-index: 2; max-width: 540px; margin: -18px auto 0; padding: 0 16px max(28px, env(safe-area-inset-bottom)); }
   .card { -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px); }
+  @media (max-height: 700px) and (max-width: 699px) {
+    /* short phones (iPhone SE…): smaller picture and tighter spacing so the whole player stays on screen */
+    .hero { height: 40vh; height: 40svh; min-height: 200px; }
+    .hero-text { bottom: 22px; }
+    h1 { font-size: 1.45rem; }
+    .card { padding: 12px 14px 12px; }
+    .label { margin-bottom: 6px; }
+    .langs { margin-bottom: 10px; }
+    .langs button { min-height: 42px; }
+    .now { margin-bottom: 2px; }
+    .buttons { margin-top: 4px; gap: 22px; }
+    .play { width: 68px; height: 68px; }
+    .play svg { inset: 16px; }
+    .play .i-play { left: 18px; }
+    .skip { width: 52px; height: 52px; }
+    .skip svg { inset: 8px; }
+  }
   @media (min-width: 700px) {
     /* wide screens: keep the whole scene instead of zooming into it, and fade the edges into the page */
     .hero { height: 72vh; max-height: 760px; max-width: calc(72vh * 1.45); margin: 0 auto;
@@ -89,6 +139,28 @@
       <audio id="player" controls preload="metadata" src="carcas-fr.mp3">
         <a href="carcas-fr.mp3">carcas-fr.mp3</a>
       </audio>
+      <div class="controls" id="controls" hidden>
+        <div class="seek">
+          <span class="time" id="cur">0:00</span>
+          <input type="range" id="seek" min="0" max="1372" step="1" value="0" data-t-aria="seek" aria-label="Position dans l'histoire">
+          <span class="time" id="tot">22:52</span>
+        </div>
+        <div class="buttons">
+          <button type="button" class="skip" id="back" data-t-aria="back" aria-label="Reculer de 10 secondes">
+            <svg viewBox="0 0 32 32" aria-hidden="true"><path d="M9.5 6.5A12 12 0 1 1 4 16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/><path d="M3.5 3.5l6.5 3-4 5.5" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            <span>10</span>
+          </button>
+          <button type="button" class="play" id="play" aria-label="Écouter">
+            <svg class="i-play" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5.2v13.6c0 .8.9 1.3 1.6.9l10.6-6.8a1 1 0 0 0 0-1.8L9.6 4.3C8.9 3.9 8 4.4 8 5.2z" fill="currentColor"/></svg>
+            <svg class="i-pause" viewBox="0 0 24 24" aria-hidden="true"><rect x="6" y="5" width="4.2" height="14" rx="1.2" fill="currentColor"/><rect x="13.8" y="5" width="4.2" height="14" rx="1.2" fill="currentColor"/></svg>
+            <span class="spinner" aria-hidden="true"></span>
+          </button>
+          <button type="button" class="skip fwd" id="fwd" data-t-aria="fwd" aria-label="Avancer de 10 secondes">
+            <svg viewBox="0 0 32 32" aria-hidden="true"><path d="M9.5 6.5A12 12 0 1 1 4 16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/><path d="M3.5 3.5l6.5 3-4 5.5" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            <span>10</span>
+          </button>
+        </div>
+      </div>
       <div class="resume" id="resume">
         <button type="button" class="primary" id="resumeBtn"></button>
         <button type="button" id="restartBtn" data-t="restart">Recommencer</button>
@@ -103,9 +175,9 @@
 (function () {
   "use strict";
   var TRACKS = {
-    fr: { file: "carcas-fr.mp3", minutes: 23 },
-    en: { file: "carcas-en.mp3", minutes: 21 },
-    es: { file: "carcas-es.mp3", minutes: 21 }
+    fr: { file: "carcas-fr.mp3", seconds: 1372 },
+    en: { file: "carcas-en.mp3", seconds: 1266 },
+    es: { file: "carcas-es.mp3", seconds: 1263 }
   };
   var TEXT = {
     fr: {
@@ -119,6 +191,11 @@
       duration: "Durée : {m} min",
       resume: "Reprendre à {t}",
       restart: "Recommencer",
+      play: "Écouter",
+      pause: "Pause",
+      back: "Reculer de 10 secondes",
+      fwd: "Avancer de 10 secondes",
+      seek: "Position dans l'histoire",
       error: "Le son ne se charge pas. Vérifiez votre connexion Internet, puis rechargez la page.",
       tip: "Avec des écouteurs, l'immersion est totale."
     },
@@ -133,6 +210,11 @@
       duration: "Length: {m} min",
       resume: "Resume at {t}",
       restart: "Start over",
+      play: "Play",
+      pause: "Pause",
+      back: "Back 10 seconds",
+      fwd: "Forward 10 seconds",
+      seek: "Position in the story",
       error: "The audio won't load. Check your Internet connection, then reload the page.",
       tip: "Use headphones for the full immersive experience."
     },
@@ -147,6 +229,11 @@
       duration: "Duración: {m} min",
       resume: "Reanudar en {t}",
       restart: "Empezar de nuevo",
+      play: "Reproducir",
+      pause: "Pausa",
+      back: "Retroceder 10 segundos",
+      fwd: "Avanzar 10 segundos",
+      seek: "Posición en la historia",
       error: "El audio no se carga. Compruebe su conexión a Internet y vuelva a cargar la página.",
       tip: "Con auriculares, la inmersión es total."
     }
@@ -154,6 +241,7 @@
   var DEFAULT_LANG = "en";
   // Regional languages of France and Spain fall back to the national version rather than English.
   var NEAR = { oc: "fr", br: "fr", co: "fr", ca: "es", gl: "es", eu: "es", ast: "es" };
+  var SKIP = 10;
 
   var player = document.getElementById("player");
   var buttons = document.querySelectorAll(".langs button");
@@ -162,9 +250,19 @@
   var restartBtn = document.getElementById("restartBtn");
   var errorBox = document.getElementById("error");
   var durationEl = document.getElementById("duration");
+  var controls = document.getElementById("controls");
+  var playBtn = document.getElementById("play");
+  var backBtn = document.getElementById("back");
+  var fwdBtn = document.getElementById("fwd");
+  var seek = document.getElementById("seek");
+  var curEl = document.getElementById("cur");
+  var totEl = document.getElementById("tot");
+  var ms = "mediaSession" in navigator ? navigator.mediaSession : null;
   var current = null;
   var lastSave = 0;
+  var dragging = false;
 
+  // ---------- small helpers ----------
   // Browser storage can be missing or blocked (private mode, some in-app browsers): never let it break the page.
   function store(key, value) {
     try { if (value === null) localStorage.removeItem(key); else localStorage.setItem(key, String(value)); } catch (e) {}
@@ -173,10 +271,19 @@
     try { return localStorage.getItem(key); } catch (e) { return null; }
   }
   function fmt(seconds) {
-    seconds = Math.floor(seconds);
+    seconds = Math.max(0, Math.floor(seconds || 0));
     var h = Math.floor(seconds / 3600), m = Math.floor((seconds % 3600) / 60), s = seconds % 60;
     return (h ? h + ":" + String(m).padStart(2, "0") : String(m)) + ":" + String(s).padStart(2, "0");
   }
+  function safePlay() {
+    var p = player.play();
+    if (p && p.catch) p.catch(function () {});
+  }
+  function duration() {
+    return isFinite(player.duration) && player.duration > 0 ? player.duration : TRACKS[current].seconds;
+  }
+
+  // ---------- language ----------
   function pickInitialLang() {
     var params = new URLSearchParams(location.search);
     var forced = (params.get("lang") || location.hash.replace("#", "")).toLowerCase();
@@ -221,18 +328,87 @@
     document.querySelectorAll("[data-t-alt]").forEach(function (el) {
       el.setAttribute("alt", t[el.getAttribute("data-t-alt")]);
     });
-    durationEl.textContent = t.duration.replace("{m}", TRACKS[lang].minutes);
+    document.querySelectorAll("[data-t-aria]").forEach(function (el) {
+      var label = t[el.getAttribute("data-t-aria")];
+      el.setAttribute("aria-label", label);
+      el.setAttribute("title", label);
+    });
+    durationEl.textContent = t.duration.replace("{m}", Math.round(TRACKS[lang].seconds / 60));
   }
+
+  // ---------- on-page controls (the same on every phone) ----------
+  function render() {
+    var d = duration();
+    var t = player.currentTime || 0;
+    if (!dragging) {
+      seek.max = String(Math.round(d));
+      seek.value = String(Math.min(t, d));
+    }
+    var shown = dragging ? Number(seek.value) : t;
+    seek.style.setProperty("--p", (d ? Math.min(100, shown / d * 100) : 0) + "%");
+    seek.setAttribute("aria-valuetext", fmt(shown) + " / " + fmt(d));
+    curEl.textContent = fmt(shown);
+    totEl.textContent = fmt(d);
+  }
+  function setPlayingUI() {
+    var playing = !player.paused && !player.ended;
+    playBtn.classList.toggle("playing", playing);
+    var label = TEXT[current][playing ? "pause" : "play"];
+    playBtn.setAttribute("aria-label", label);
+    playBtn.setAttribute("title", label);
+  }
+  function jump(delta) {
+    var target = Math.max(0, Math.min(duration() - 0.5, (player.currentTime || 0) + delta));
+    player.currentTime = target;
+    render();
+    updatePosition();
+  }
+  function commitSeek() {
+    if (!dragging) return;
+    dragging = false;
+    player.currentTime = Number(seek.value);
+    render();
+    updatePosition();
+  }
+
+  // ---------- lock screen / notification controls ----------
   function updateMediaSession(lang) {
-    if (!("mediaSession" in navigator) || typeof MediaMetadata === "undefined") return;
+    if (!ms || typeof MediaMetadata === "undefined") return;
     try {
-      navigator.mediaSession.metadata = new MediaMetadata({
+      ms.metadata = new MediaMetadata({
         title: TEXT[lang].title,
         artist: TEXT[lang].kicker,
+        album: TEXT[lang].version,
         artwork: [{ src: "couverture-carre.jpg", sizes: "900x900", type: "image/jpeg" }]
       });
     } catch (e) {}
   }
+  function updatePosition() {
+    if (!ms || !ms.setPositionState) return;
+    var d = player.duration;
+    if (!isFinite(d) || d <= 0) return;
+    try {
+      ms.setPositionState({ duration: d, playbackRate: player.playbackRate || 1, position: Math.min(player.currentTime || 0, d) });
+    } catch (e) {}
+  }
+  function setHandler(action, fn) {
+    if (!ms) return;
+    try { ms.setActionHandler(action, fn); } catch (e) {} // some phones don't know every action
+  }
+  setHandler("play", safePlay);
+  setHandler("pause", function () { player.pause(); });
+  setHandler("stop", function () { player.pause(); });
+  setHandler("seekbackward", function (d) { jump(-((d && d.seekOffset) || SKIP)); });
+  setHandler("seekforward", function (d) { jump((d && d.seekOffset) || SKIP); });
+  setHandler("seekto", function (d) {
+    if (!d || typeof d.seekTime !== "number") return;
+    if (d.fastSeek && typeof player.fastSeek === "function") player.fastSeek(d.seekTime);
+    else player.currentTime = d.seekTime;
+    render();
+    updatePosition();
+  });
+
+  // ---------- resume where the listener stopped ----------
   function showResume(lang) {
     var pos = parseFloat(read("carcas-pos-" + lang));
     if (pos > 15) {
@@ -243,6 +419,7 @@
       resumeBox.classList.remove("show");
     }
   }
+
   function setLang(lang, userChose) {
     if (!TRACKS[lang] || lang === current) return;
     if (current && player.currentTime > 0) store("carcas-pos-" + current, player.currentTime);
@@ -250,37 +427,95 @@
     current = lang;
     buttons.forEach(function (b) { b.setAttribute("aria-pressed", b.dataset.lang === lang ? "true" : "false"); });
     errorBox.classList.remove("show");
+    playBtn.classList.remove("loading");
     var file = TRACKS[lang].file;
     if (player.getAttribute("src") !== file) { player.setAttribute("src", file); player.load(); }
     applyText(lang);
     updateMediaSession(lang);
     showResume(lang);
+    render();
+    setPlayingUI();
     if (userChose) store("carcas-lang", lang);
   }
+
+  // ---------- wiring ----------
+  // Our controls replace the browser's built-in player, whose buttons differ from one phone to another.
+  // Without JavaScript the built-in player stays, so the audio always remains playable.
+  player.removeAttribute("controls");
+  player.style.display = "none";
+  controls.hidden = false;
+
   buttons.forEach(function (b) { b.addEventListener("click", function () { setLang(b.dataset.lang, true); }); });
+  playBtn.addEventListener("click", function () {
+    if (player.paused || player.ended) safePlay(); else player.pause();
+  });
+  backBtn.addEventListener("click", function () { jump(-SKIP); });
+  fwdBtn.addEventListener("click", function () { jump(SKIP); });
+  seek.addEventListener("input", function () { dragging = true; render(); });
+  seek.addEventListener("change", commitSeek);
+  ["pointerup", "touchend", "blur"].forEach(function (ev) { seek.addEventListener(ev, commitSeek); });
+
   resumeBtn.addEventListener("click", function () {
     var pos = parseFloat(resumeBtn.dataset.pos) || 0;
     resumeBox.classList.remove("show");
-    var go = function () { player.currentTime = pos; var p = player.play(); if (p && p.catch) p.catch(function () {}); };
+    var go = function () { player.currentTime = pos; render(); safePlay(); };
     if (player.readyState >= 1) go(); else player.addEventListener("loadedmetadata", go, { once: true });
   });
   restartBtn.addEventListener("click", function () {
     store("carcas-pos-" + current, null);
     resumeBox.classList.remove("show");
     player.currentTime = 0;
-    var p = player.play(); if (p && p.catch) p.catch(function () {});
+    render();
+    safePlay();
   });
-  player.addEventListener("play", function () { resumeBox.classList.remove("show"); errorBox.classList.remove("show"); });
+
+  player.addEventListener("play", function () {
+    resumeBox.classList.remove("show");
+    errorBox.classList.remove("show");
+    setPlayingUI();
+    updateMediaSession(current); // some phones forget the cover/title after a pause: give it again
+    if (ms) ms.playbackState = "playing";
+    updatePosition();
+  });
+  player.addEventListener("playing", function () { playBtn.classList.remove("loading"); });
+  player.addEventListener("waiting", function () { playBtn.classList.add("loading"); });
+  player.addEventListener("canplay", function () { playBtn.classList.remove("loading"); });
+  player.addEventListener("pause", function () {
+    playBtn.classList.remove("loading");
+    setPlayingUI();
+    if (ms) ms.playbackState = "paused";
+    updatePosition();
+    if (player.currentTime > 0 && !player.ended) store("carcas-pos-" + current, player.currentTime);
+  });
+  player.addEventListener("ended", function () {
+    setPlayingUI();
+    if (ms) ms.playbackState = "none";
+    store("carcas-pos-" + current, null);
+  });
   player.addEventListener("timeupdate", function () {
+    render();
     var now = Date.now();
     if (now - lastSave > 4000 && player.currentTime > 0) { lastSave = now; store("carcas-pos-" + current, player.currentTime); }
   });
-  player.addEventListener("pause", function () { if (player.currentTime > 0 && !player.ended) store("carcas-pos-" + current, player.currentTime); });
-  player.addEventListener("ended", function () { store("carcas-pos-" + current, null); });
+  player.addEventListener("seeked", function () { render(); updatePosition(); });
   player.addEventListener("loadedmetadata", function () {
-    if (isFinite(player.duration) && player.duration > 0) durationEl.textContent = TEXT[current].duration.replace("{m}", Math.round(player.duration / 60));
+    durationEl.textContent = TEXT[current].duration.replace("{m}", Math.round(duration() / 60));
+    render();
+    updatePosition();
   });
-  player.addEventListener("error", function () { if (player.error) errorBox.classList.add("show"); });
+  player.addEventListener("error", function () {
+    if (player.error) { errorBox.classList.add("show"); playBtn.classList.remove("loading"); }
+  });
+  // Back on the page after the phone was locked: bring the screen and the lock-screen info up to date.
+  document.addEventListener("visibilitychange", function () {
+    if (document.visibilityState !== "visible") return;
+    render();
+    setPlayingUI();
+    updateMediaSession(current);
+    if (ms) ms.playbackState = player.paused ? "paused" : "playing";
+    updatePosition();
+  });
+
   setLang(pickInitialLang(), false);
 })();
 </script>
